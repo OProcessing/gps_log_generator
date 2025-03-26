@@ -1,6 +1,5 @@
-
-import os
 import math
+import os
 from datetime import datetime
 
 def calculate_nmea_checksum(nmea_str: str) -> str:
@@ -188,54 +187,13 @@ def generate_log(latitude, longitude, speed, heading) :
     log = "\n".join([rmc, gga, gll, gsa, gsv_gps, gsv_glo])
     return log
 
-def nmea_to_decimal(nmea_coord: str, hemisphere: str, is_lat: bool = True) -> float:
-    if is_lat:
-        degree_digits = 2
-    else:
-        degree_digits = 3
-    degrees = int(nmea_coord[:degree_digits])
-    minutes = float(nmea_coord[degree_digits:])
-    decimal_deg = degrees + minutes / 60.0
-    if hemisphere.upper() in ['S', 'W']:
-        decimal_deg = -decimal_deg
 
-    return decimal_deg
-
-
-def nmea_sentence_to_decimal(nmea_sentence: str) -> tuple[float, float]:
-    fields = nmea_sentence.strip().split(',')
-    sentence_type = fields[0].lstrip('$').upper()
-
-    if sentence_type in ["GPRMC", "GNRMC"]:
-        lat_str = fields[3]
-        ns = fields[4]
-        lon_str = fields[5]
-        ew = fields[6]
-    elif sentence_type in ["GPGGA", "GNGGA"]:
-        lat_str = fields[2]
-        ns = fields[3]
-        lon_str = fields[4]
-        ew = fields[5]
-    elif sentence_type in ["GPGLL", "GNGLL"]:
-        lat_str = fields[1]
-        ns = fields[2]
-        lon_str = fields[3]
-        ew = fields[4]
-    else:
-        raise ValueError("Unsupported NMEA sentence type for coordinate conversion.")
-
-    lat_decimal = nmea_to_decimal(lat_str, ns, is_lat=True)
-    lon_decimal = nmea_to_decimal(lon_str, ew, is_lat=False)
-
-    return lat_decimal, lon_decimal
-
-
-def main(latitude=55.7558, longitude=37.6173, 
+def generate(latitude=55.7558, longitude=37.6173, 
         start_speed=10, end_speed=180, step_speed=5, 
         distance_coeff=1, heading=0, iterations=50):
     
     desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
-    file_path = os.path.join(desktop_path, "gpslog.txt")
+    file_path = os.path.join(desktop_path, "gpslogtest.txt")
     speed = start_speed
     step_distance_deg = 0.00005 * distance_coeff
 
@@ -258,27 +216,6 @@ def main(latitude=55.7558, longitude=37.6173,
 
     print("\n*************************************\n")
     print(f"Log file saved to {file_path}")
-    print(f"Speed range: {start_speed}-{end_speed} km/h, step: {step_speed} km/h, Heading: {heading}¡Æ ")
+    print(f"Speed range: {start_speed}-{end_speed} km/h, step: {step_speed} km/h, Heading: {heading}Â° ")
     print(f"end location : {latitude:.6f}, {longitude:.6f}")
     print("\n*************************************\n")
-
-# parameters    
-# latitude      : default moscow lat
-# longitude     : default moscow lon
-# start_speed   : default 10 km/h
-# end_speed     : default 180 km/h
-# step_speed    : default 5 km/h
-# distance_coeff: default 1, (0.00005 * distance_coeff) degrees
-# heading       : default 0¡Æ
-# iterations    : default 50
-
-if __name__ == "__main__":
-    latitude = 55.771298
-    longitude = 49.136459
-    start_speed = 50
-    end_speed = 150
-    step_speed = 5
-    distance_coeff = 2
-    heading = 55
-    iterations = 70
-    main(latitude, longitude, start_speed, end_speed, step_speed, distance_coeff, heading, iterations)
