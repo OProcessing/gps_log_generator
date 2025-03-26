@@ -5,11 +5,11 @@ def main() :
     longitude = 49.136459
     start_speed = 50
     end_speed = 150
-    step_speed = 5
+    step_speed = 10
     distance_coeff = 2
     heading = 55
     iterations = 70
-    gps.generate(start_speed=50, end_speed=100, step_speed=5)
+    gps.generate(latitude, longitude, start_speed, end_speed, step_speed, distance_coeff, heading, iterations)
 
 # parameters    
 # latitude      : default moscow lat

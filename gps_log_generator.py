@@ -193,7 +193,7 @@ def generate(latitude=55.7558, longitude=37.6173,
         distance_coeff=1, heading=0, iterations=50):
     
     desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
-    file_path = os.path.join(desktop_path, "gpslogtest.txt")
+    file_path = os.path.join(desktop_path, "gpslog.txt")
     speed = start_speed
     step_distance_deg = 0.00005 * distance_coeff
 
