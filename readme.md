@@ -8,7 +8,7 @@
     end_speed = 150           # Ending speed in km/h (default: 180 km/h)
     step_speed = 5            # Speed increment per iteration (default: 5 km/h)
     distance_coeff = 2        # Multiplier for step distance in degrees (default: 1)
-    heading = 55              # Heading (direction) in degrees (default: 0°)
+    heading = 55              # Heading (direction) in degrees (default: 0째)
     iterations = 70           # Number of iterations for generating log points (default: 50)
 
     eg.

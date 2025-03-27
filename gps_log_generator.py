@@ -187,28 +187,49 @@ def generate_log(latitude, longitude, speed, heading) :
     log = "\n".join([rmc, gga, gll, gsa, gsv_gps, gsv_glo])
     return log
 
-
-def generate(latitude=55.7558, longitude=37.6173, 
-        start_speed=10, end_speed=180, step_speed=5, 
-        distance_coeff=1, heading=0, iterations=50):
-    
+def generate(
+    start_lat: float,
+    start_lon: float,
+    end_lat: float,
+    end_lon: float,
+    start_speed: float = 10,
+    end_speed: float = 180,
+    step_speed: float = 5,
+    distance_coeff: float = 1,
+    heading: float = 0,
+    iterations: int = 50
+):
+    if start_lat is None:
+        start_lat = 55.751244
+    if start_lon is None:
+        start_lon = 37.618423
+    if end_lat is None:
+        end_lat = 55.751244
+    if end_lon is None:
+        end_lon = 37.618423
+        
+    # "lat_lon_startspeed_endspeed.txt"
     desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
-    file_path = os.path.join(desktop_path, "gpslog.txt")
+    file_name = f"{start_lat:.4f}_{start_lon:.4f}_{start_speed}_{end_speed}.txt"
+    file_path = os.path.join(desktop_path, file_name)
+
+    base_lat_diff = end_lat - start_lat
+    base_lon_diff = end_lon - start_lon
+
+    lat_step = (base_lat_diff / 100.0) * distance_coeff
+    lon_step = (base_lon_diff / 100.0) * distance_coeff
+
+    lat = start_lat
+    lon = start_lon
     speed = start_speed
-    step_distance_deg = 0.00005 * distance_coeff
 
     with open(file_path, "w", encoding="utf-8") as f:
         for i in range(iterations):
-
-            log_str = generate_log(latitude, longitude, speed, heading)
+            log_str = generate_log(lat, lon, speed, heading)
             f.write(log_str + "\n")
 
-            heading_rad = math.radians(heading)
-            delta_lat = step_distance_deg * math.cos(heading_rad)
-            delta_lon = step_distance_deg * math.sin(heading_rad)
-
-            latitude += delta_lat
-            longitude += delta_lon
+            lat += lat_step
+            lon += lon_step
 
             speed += step_speed
             if speed > end_speed:
@@ -216,6 +237,7 @@ def generate(latitude=55.7558, longitude=37.6173,
 
     print("\n*************************************\n")
     print(f"Log file saved to {file_path}")
-    print(f"Speed range: {start_speed}-{end_speed} km/h, step: {step_speed} km/h, Heading: {heading}° ")
-    print(f"end location : {latitude:.6f}, {longitude:.6f}")
-    print("\n*************************************\n")
+    print(f"Start location : {start_lat:.6f}, {start_lon:.6f}")
+    print(f"Speed range    : {start_speed}-{end_speed} km/h (step: {step_speed})")
+    print(f"Final lat,lon  : {lat:.6f}, {lon:.6f}")
+    print("*************************************\n")
