@@ -1,22 +1,114 @@
-### GPS NMEA Log Generator
+# GPS 로그 생성기 사용 설명서
 
-## How to Use
+## 1. 프로그램 개요
 
-    latitude = 55.771298      # Starting latitude (default: Moscow latitude)
-    longitude = 49.136459     # Starting longitude (default: Moscow longitude)
-    start_speed = 50          # Starting speed in km/h (default: 10 km/h)
-    end_speed = 150           # Ending speed in km/h (default: 180 km/h)
-    step_speed = 5            # Speed increment per iteration (default: 5 km/h)
-    distance_coeff = 2        # Multiplier for step distance in degrees (default: 1)
-    heading = 55              # Heading (direction) in degrees (default: 0°)
-    iterations = 70           # Number of iterations for generating log points (default: 50)
+이 프로그램은 DB 데이터(위도/경도/방향/속도 정보)를 기반으로 GPS 로그 파일을 생성하는 PyQt5 데스크톱 도구입니다.
 
-    eg.
-    # Generates GPS log with speeds ranging from 50 to 100 km/h in 5 km/h increments for 50 iterations
-    gps.generate(start_speed=50, end_speed=100, step_speed=5) 
+주요 기능은 다음과 같습니다.
 
-    # Generates GPS log with speeds ranging from 20 to 70 km/h in 10 km/h increments for 5 iterations
-    gps.generate(start_speed=20, end_speed=120, step_speed=10, iterations=5) 
+- DB 파일(Excel/CSV/TSV) 로드
+- 기준점 중심 반경 검색 + 목록(텍스트) 검색
+- 지도에서 DB 포인트 확인 및 핀 선택 연동
+- 기준점/시작점/종료점 기반 주행 구간 설정
+- 속도 조건에 따른 GPS 로그 파일 생성
 
-    # Generates GPS log in moscow, 10-180 km/h, 5 km/h step, head to north
-    gps.generate() 
+## 2. 시스템 요구 사항
+
+- Python 3.10 이상
+- Windows 환경 기준 테스트
+- 네트워크(지도 타일 로드용)
+
+필수 패키지:
+
+- PyQt5
+- PyQtWebEngine
+- openpyxl
+
+## 3. 설치 방법
+
+프로젝트 루트에서 아래 명령을 실행합니다.
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+또는 패키지 방식으로:
+
+```bash
+pip install .
+```
+
+## 4. 실행 방법
+
+### 방법 A: 기존 실행 방식
+
+```bash
+python main.py
+```
+
+### 방법 B: 모듈 실행 방식
+
+```bash
+python -m gps_log_generator_app
+```
+
+### 방법 C: 설치 후 콘솔 명령
+
+```bash
+gps-log-generator
+```
+
+## 5. 기본 사용 절차
+
+1. 프로그램 실행 후 DB 파일을 로드합니다.
+2. DB 데이터 영역에서 검색 조건을 설정합니다.
+   - FLAG 필터
+   - 목록 검색(텍스트)
+   - 검색 반경(km)
+3. `검색` 버튼으로 목록을 갱신합니다.
+4. 지도의 DB 핀 또는 목록에서 대상 지점을 확인합니다.
+5. 필요 시 `선택한 행을 기준점으로 설정` 버튼으로 기준점을 반영합니다.
+6. 시작/종료 거리, 속도 조건을 설정한 뒤 `GPS 로그 파일 생성`을 실행합니다.
+
+## 6. 검색 기능 안내
+
+### 6.1 반경 검색
+
+- 기준점(기준 위도/경도)을 중심으로 반경 내 DB 포인트를 검색합니다.
+- 반경은 UI에서 지정할 수 있습니다.
+
+### 6.2 목록 검색
+
+- `목록 검색` 입력란에 텍스트를 입력하면 행 전체 값(지역, 스크린네임, 플래그 등) 기준으로 검색합니다.
+- Enter 키 또는 `검색` 버튼으로 실행할 수 있습니다.
+
+### 6.3 자동 확장 검색
+
+- 검색 결과가 너무 적을 경우, 내부적으로 검색 반경을 단계적으로 확장하여 후보를 찾습니다.
+
+## 7. 지도 상호작용
+
+- DB 핀 마우스오버 시 목록에서 해당 행이 하이라이트됩니다.
+- DB 핀 클릭 시 해당 핀 하이라이트가 고정됩니다.
+- 지도의 빈 영역을 클릭하면 핀 고정이 해제됩니다.
+- 시작/기준/종료 마커는 드래그로 이동 가능합니다.
+
+## 8. 생성 제한 정책
+
+대용량 로그 생성을 방지하기 위해 거리 제한이 적용됩니다.
+
+- 시작거리 최대: 3km
+- 종료거리 최대: 1km
+
+입력값 또는 드래그 결과가 제한을 초과하면, 생성 시 자동으로 제한값으로 보정됩니다.
+
+## 9. 출력 파일
+
+- 생성된 로그 파일은 프로젝트의 `data` 폴더에 저장됩니다.
+- 파일명은 생성 시각 기준 `연월일시분초` 형식(`YYYYMMDDHHMMSS.txt`)을 사용합니다.
+
+## 10. 라이선스
+
+본 프로젝트는 `LICENSE` 파일의 MIT 라이선스를 따릅니다.

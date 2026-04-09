@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gps-log-generator"
+version = "1.0.0"
+description = "DB 기반 GPS 로그 생성기 (PyQt5)"
+readme = "readme.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Development Team" }]
+dependencies = [
+    "PyQt5>=5.15.0",
+    "PyQtWebEngine>=5.15.0",
+    "openpyxl>=3.0.0",
+]
+
+[project.scripts]
+gps-log-generator = "gps_log_generator_app.cli:main"
+
+[tool.setuptools]
+packages = ["gps_log_generator_app"]
